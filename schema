@@ -1,0 +1,39 @@
+CREATE TABLE train (
+	building_id INT PRIMARY KEY,
+	meter INT,
+	timestamp DATE,
+	meter_reading FLOAT);
+	
+CREATE TABLE weather_train (
+	site_id INT PRIMARY KEY,
+	timestamp DATE,
+	air_temperature FLOAT,
+	cloud_coverage FLOAT,
+	dew_temperature FLOAT,
+	precip_depth_1_hr FLOAT,
+	sea_level_pressure FLOAT,
+	wind_direction FLOAT,
+	wind_speed FLOAT);
+	
+CREATE TABLE building (
+	site_id INT PRIMARY KEY,
+	building_id INT,
+	primary_use VARCHAR(100),
+	square_feet INT,
+	year_built FLOAT,
+	floor_count FLOAT,
+		FOREIGN KEY (building_id) REFERENCES train (building_id));
+
+COPY train(building_id,meter,timestamp,meter_reading)
+FROM 'C:\Bootcamp\Kaggle Challenge\energy_predictor\data\train.csv'
+DELIMITER ','
+CSV HEADER;
+
+SELECT *
+FROM train AS t
+LEFT JOIN building AS b ON t.building_id = b.building_id
+LEFT JOIN weather_train AS w ON 
+	b.site_id = w.site_id AND t.timestamp = w.timestamp;
+
+
+				
